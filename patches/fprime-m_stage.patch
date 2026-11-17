@@ -1,0 +1,22 @@
+diff --git a/Fw/Comp/ActiveComponentBase.hpp b/Fw/Comp/ActiveComponentBase.hpp
+index 08f8edd..0201ece 100644
+--- a/Fw/Comp/ActiveComponentBase.hpp
++++ b/Fw/Comp/ActiveComponentBase.hpp
+@@ -54,7 +54,16 @@ class ActiveComponentBase : public QueuedComponentBase {
+     virtual const char* getToStringFormatString();  //!< Format string for toString function
+ #endif
+   private:
+-    Lifecycle m_stage;                      //!< Lifecycle stage of the component
++    // Local patch, LIONESS camera stack, Nov 16 2026: F Prime
++    // v4.1.1 never initializes m_stage. The first task loop call
++    // reads it, so a component that is not on fresh zeroed memory
++    // can hit the default case assert in s_taskStateMachine.
++    // Initializing it here makes every active component start in
++    // CREATED. Upstream fix is the same one line. The deployment
++    // heap allocates its components, so it worked by luck before
++    // this patch; the host E2E test stack allocates them and hit
++    // the assert under ThreadSanitizer.
++    Lifecycle m_stage = Lifecycle::CREATED;  //!< Lifecycle stage of the component
+     static void s_taskStateMachine(void*);  //!< Task lifecycle state machine
+     static void s_taskLoop(void*);          //!< Standard multi-threading task loop
+ };

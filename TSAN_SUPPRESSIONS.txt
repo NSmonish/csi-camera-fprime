@@ -1,0 +1,32 @@
+# ThreadSanitizer suppressions for the LIONESS camera stack host tests.
+#
+# These cover two known races that live outside the camera components.
+# Nothing in LionessSw/Components/Camera, ImageProcessing,
+# PayloadManager, StarTrackerManager, or LionessSw/V4L2 is suppressed.
+#
+# 1. F Prime GTestBase event history. The generated *TesterBase
+#    classes record events in plain vectors and a plain eventsSize
+#    counter with no lock. The Camera and ImageProcessing workers
+#    log events from their worker threads. That is the design in
+#    sdd.md (worker sends the completion) and it is safe in flight,
+#    where the log port goes to the event logger queue, which is
+#    built for concurrent loggers. The UT harness is the only
+#    consumer that is not thread safe.
+#
+# 2. F Prime v4.1.1 Os/Posix/Task.cpp. PosixTask::create calls
+#    pthread_create first and only afterwards copies the task name
+#    into the handle, while the new thread's entry calls
+#    set_task_name on the same buffer. Upstream framework race,
+#    present in every F Prime deployment that starts tasks. Benign
+#    in practice: both sides write the same name bytes.
+#
+# Run with: TSAN_OPTIONS=suppressions=<this file> <test binary>
+# (and setarch $(uname -m) -R on this VM, see RESULTS.md).
+
+race:Components::CameraTesterBase::*
+race:Components::ImageProcessingTesterBase::*
+race:Components::PayloadManagerTesterBase::*
+race:Components::StarTrackerManagerTesterBase::*
+race:Components::StarTrackerTesterBase::*
+race:Os::Posix::Task::*
+race:Fw::StringUtils::string_copy

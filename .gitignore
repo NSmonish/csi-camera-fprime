@@ -1,0 +1,53 @@
+# F' / Flight Software build artifacts
+fsw/lioness-sw/logs/
+fsw/lioness-sw/cmake-build-*
+fsw/lioness-sw/build-artifacts/
+fsw/lioness-sw/build-fprime-*
+fsw/lioness-sw/*-template
+fsw/lioness-sw/*.template.cpp
+fsw/lioness-sw/*.template.hpp
+
+# Virtual environments
+fsw/lioness-sw/venv/
+fsw/lioness-sw/fprime-venv/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Coverage
+*.gcov
+*.gcda
+*.gcno
+coverage/
+htmlcov/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Logs
+*.log
+
+# Demo run logs and storage (products in demo/products/ are kept)
+demo/.run/
+demo/.run_pi/
+e2e_storage/
+test_storage_payload/
+camera_storage/
+**/camera_storage/
+
+# Compiled frame checker (build it from tools/verify_real_frame.cpp)
+tools/verify_real_frame
